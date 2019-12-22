@@ -78,6 +78,7 @@ class BasePlugin:
 
     def onMQTTConnect(self, client, userdata, flags, rc):
         Domoticz.Debug("onMQTTConnect called")
+        Domoticz.Debug("Connected to " + self.mqttserveraddress + " with result cde {}".format(rc))
 
     def onMessage(self, Connection, Data):
         Domoticz.Debug("onMessage called")
