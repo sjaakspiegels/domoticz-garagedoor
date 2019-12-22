@@ -54,7 +54,7 @@ class BasePlugin:
         self.mqttserverport = Parameters["Port"].strip()
         self.mqttusername = Parameters["Username"].strip()
         self.mqttpassword = Parameters["Password"].strip()
-        self.mqttstatetopic = Parameters["Model1"].strip()
+        self.mqttstatetopic = Parameters["Mode1"].strip()
 
         self.mqttClient = mqtt.Client()
         self.mqttClient.on_connect = onMQTTConnect
