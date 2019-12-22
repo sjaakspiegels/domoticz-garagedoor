@@ -57,10 +57,9 @@ class BasePlugin:
         self.mqttClient = mqtt.Client()
         self.mqttClient.on_connect = onMQTTConnect
         self.mqttClient.on_subscribe = onMQTTSubscribe
-        self.mqttClient._on_message = onMQTTmessage
+        self.mqttClient.on_message = onMQTTmessage
         self.mqttClient.username_pw_set(username=self.mqttusername, password=self.mqttpassword)
-        self.mqttClient.connect(self.mqttserveraddress, int(self.mqttserverport), 60)
-        self.mqttClient.subscribe("garagedeur/status",1)
+        self.mqttClient.connect(self.mqttserveraddress, int(self.mqttserverport), 60)        
         self.mqttClient.loop_start()
 
         if (len(Devices) == 0):
@@ -76,6 +75,7 @@ class BasePlugin:
 
     def onConnect(self, Connection, Status, Description):
         Domoticz.Debug("onConnect called")
+        self.mqttClient.subscribe("garagedeur/status",1)
 
     def onMQTTConnect(self, client, userdata, flags, rc):
         Domoticz.Debug("onMQTTConnect called")
