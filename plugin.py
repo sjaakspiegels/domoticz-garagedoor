@@ -113,8 +113,8 @@ def onHeartbeat():
 
 # Synchronise images to match parameter in hardware page
 def UpdateImage(Unit):
-    if (Unit in Devices) and ('GarageClosed' in Images):
-        Domoticz.Debug("Device Image update: GarageClosed ")
-        if (Devices[Unit].Image != Images['GarageClosed'].ID):
-            Devices[Unit].Update(nValue=Devices[Unit].nValue, sValue=str(Devices[Unit].sValue), Image=Images['GarageClosed'].ID)
+    if (Unit in Devices) and ('GarageDoorClosed' in Images):
+        Domoticz.Debug("Device Image update: GarageDoorClosed ")
+        if (Devices[Unit].Image != Images['GarageDoorClosed'].ID):
+            Devices[Unit].Update(nValue=Devices[Unit].nValue, sValue=str(Devices[Unit].sValue), Image=Images['GarageDoorClosed'].ID)
     return
