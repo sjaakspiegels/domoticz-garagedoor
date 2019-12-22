@@ -79,11 +79,11 @@ class BasePlugin:
 
     def onConnect(self, Connection, Status, Description):
         Domoticz.Debug("onConnect called")
-        self.mqttClient.subscribe(self.mqttstatetopic,1)
 
     def onMQTTConnect(self, client, userdata, flags, rc):
         Domoticz.Debug("onMQTTConnect called")
         Domoticz.Debug("Connected to " + self.mqttserveraddress + " with result code {}".format(rc))
+        self.mqttClient.subscribe(self.mqttstatetopic,1)
 
     def onMQTTSubscribe(self, client, userdata, mid, granted_qos):
         Domoticz.Debug("onMQTTSubscribe called")
