@@ -89,10 +89,10 @@ class BasePlugin:
         Domoticz.Debug("onMQTTSubscribe called")
 
     def onMQTTmessage(self, client, userdata, message):
-        Domoticz.Debug("message received " ,str(message.payload.decode("utf-8")))
-        Domoticz.Debug("message topic=",message.topic)
-        Domoticz.Debug("message qos=",message.qos)
-        Domoticz.Debug("message retain flag=",message.retain)
+        Domoticz.Debug("message received " + str(message.payload.decode("utf-8")))
+        Domoticz.Debug("message topic=" + message.topic)
+        Domoticz.Debug("message qos=" + message.qos)
+        Domoticz.Debug("message retain flag=" + message.retain)
 
     def onMessage(self, Connection, Data):
         Domoticz.Debug("onMessage called")
