@@ -38,11 +38,9 @@ class BasePlugin:
         if Parameters["Mode6"] == "Debug":
             Domoticz.Debugging(1)        
             Domoticz.Log("Debugging ON")
-            DumpConfigToLog()
 
     def onStop(self):
         Domoticz.Debug("onStop called")
-        self.connection.close()
 
     def onConnect(self, Connection, Status, Description):
         Domoticz.Debug("onConnect called")
@@ -97,55 +95,3 @@ def onDisconnect(Connection):
 def onHeartbeat():
     global _plugin
     _plugin.onHeartbeat()
-
-    # Generic helper functions
-def DumpConfigToLog():
-    for x in Parameters:
-        if Parameters[x] != "":
-            Domoticz.Debug( "'" + x + "':'" + str(Parameters[x]) + "'")
-    Domoticz.Debug("Device count: " + str(len(Devices)))
-    for x in Devices:
-        Domoticz.Debug("Device:           " + str(x) + " - " + str(Devices[x]))
-        Domoticz.Debug("Device ID:       '" + str(Devices[x].ID) + "'")
-        Domoticz.Debug("Device Name:     '" + Devices[x].Name + "'")
-        Domoticz.Debug("Device nValue:    " + str(Devices[x].nValue))
-        Domoticz.Debug("Device sValue:   '" + Devices[x].sValue + "'")
-        Domoticz.Debug("Device LastLevel: " + str(Devices[x].LastLevel))
-    return
-
-def get_sensor_triggered(sensor):
-    if sensor is not None:
-        Domoticz.Debug("Device: " + sensor["name"] + " status = " + sensor["status"] )
-        if sensor['status'].upper() == "DOOR OPEN":
-            return True
-        elif sensor['status'].upper() == "DOOR CLOSE":
-            return False
-    else:
-        return None
-
-def get_panel_state(panel):
-    if panel is not None:
-        status = panel['updates']['mode_a1']
-        return status.upper()
-    else:
-        return None
-
-def parse_to_json(sensor_data):
-    import json
-    import re
-    sensor_data = sensor_data.replace("/*-secure-","")
-    sensor_data = sensor_data.replace("*/","")
-    sensor_data = sensor_data.replace('{	senrows : [','{"senrows":[')
-    property_names_to_fix = ["no","type","type_f","area", "zone", "name", "attr", "cond", "cond_ok", "battery", "battery_ok", "tamp", "tamper", "tamper_ok", "bypass", "rssi", "status", "id","su"]
-    for p in property_names_to_fix:
-        sensor_data = sensor_data.replace(p+' :','"'+p+'":')
-    data = json.loads(sensor_data, strict=False)
-    return data
-
-def UpdateDevice(Unit, nValue, sValue):
-# Make sure that the Domoticz device still exists (they can be deleted) before updating it 
-    if (Unit in Devices):
-        if (Devices[Unit].nValue != nValue) or (Devices[Unit].sValue != sValue):
-            Devices[Unit].Update(nValue=nValue, sValue=str(sValue))
-            Domoticz.Debug("Update "+str(nValue)+":'"+str(sValue)+"' ("+Devices[Unit].Name+")")
-    return
