@@ -60,9 +60,7 @@ class BasePlugin:
         Domoticz.Debug("Before connect MQTT")
         self.mqttClient.connect(self.mqttserveraddress, int(self.mqttserverport), 60)
         Domoticz.Debug("After connect MQTT")
-#        self.mqttClient.loop_start()
-#        self.mqttClient = MqttClientSH2(self.mqttserveraddress, self.mqttserverport, "", self.onMQTTConnected, self.onMQTTDisconnected, self.onMQTTPublish, self.onMQTTSubscribed)
-# username_pw_set(username=”roger”,password=”password”)
+        self.mqttClient.loop_start()
 
         if (len(Devices) == 0):
             Options = {"LevelActions": "|","LevelNames": "Open|Sluit","LevelOffHidden": "false","SelectorStyle": "1"}
@@ -98,10 +96,6 @@ class BasePlugin:
 
     def onHeartbeat(self):
         Domoticz.Debug("onHeartbeat called")
-        if (1 in Devices):
-            Domoticz.Debug("Device 1 exists")
-        if ('GarageDoorClosed' in Images):
-            Domoticz.Debug("Image closed exists")
 
 global _plugin
 _plugin = BasePlugin()
