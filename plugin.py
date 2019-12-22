@@ -96,7 +96,7 @@ class BasePlugin:
         state = str(message.payload.decode("utf-8"))
         if state == "open":
             UpdateImage(1, 'GarageDoorOpen')
-        elif state == "gesloten":
+        elif state == "closed":
             UpdateImage(1, 'GarageDoorClosed')
         else:
             UpdateImage(1, 'GarageDoorHalfOpen')
