@@ -50,6 +50,14 @@ class BasePlugin:
         if ('GarageDoorOpen' not in Images): Domoticz.Image('GarageDoorOpen.zip').Create()
         if ('GarageDoorHalfOpen' not in Images): Domoticz.Image('GarageDoorHalfOpen.zip').Create()
 
+        if (len(Devices) == 0):
+            Options = {"LevelActions": "|","LevelNames": "Open|Sluit","LevelOffHidden": "false","SelectorStyle": "1"}
+            Domoticz.Device(Name="garage-door-status", Unit=1, TypeName="Selector Switch", Switchtype=18, Image=13, Options=Options).Create()
+            Domoticz.Log("Devices created.")
+
+        if (1 in Devices):
+            UpdateImage(1, 'GarageDoorHalfOpen')
+            
         self.mqttserveraddress = Parameters["Address"].strip()
         self.mqttserverport = Parameters["Port"].strip()
         self.mqttusername = Parameters["Username"].strip()
@@ -64,13 +72,7 @@ class BasePlugin:
         self.mqttClient.connect(self.mqttserveraddress, int(self.mqttserverport), 60)        
         self.mqttClient.loop_start()
 
-        if (len(Devices) == 0):
-            Options = {"LevelActions": "|","LevelNames": "Open|Sluit","LevelOffHidden": "false","SelectorStyle": "1"}
-            Domoticz.Device(Name="garage-door-status", Unit=1, TypeName="Selector Switch", Switchtype=18, Image=13, Options=Options).Create()
-            Domoticz.Log("Devices created.")
 
-        if (1 in Devices):
-            UpdateImage(1, 'GarageDoorHalfOpen')
  
     def onStop(self):
         Domoticz.Debug("onStop called")
@@ -176,4 +178,6 @@ def UpdateImage(Unit, StateIcon):
         Domoticz.Debug("Device Image update")
         if (Devices[Unit].Image != Images[StateIcon].ID):
             Devices[Unit].Update(nValue=Devices[Unit].nValue, sValue=str(Devices[Unit].sValue), Image=Images[StateIcon].ID)
+    else:
+        Domoticz.Debug("Error update icon")
     return
