@@ -60,7 +60,7 @@ class BasePlugin:
         self.mqttClient._on_message = onMQTTmessage
         self.mqttClient.username_pw_set(username=self.mqttusername, password=self.mqttpassword)
         self.mqttClient.connect(self.mqttserveraddress, int(self.mqttserverport), 60)
-        self.mqttClient.subscribe("garagedeur/status”,1)
+        self.mqttClient.subscribe("garagedeur/status",1)
         self.mqttClient.loop_start()
 
         if (len(Devices) == 0):
