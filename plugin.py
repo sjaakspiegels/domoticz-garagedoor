@@ -38,14 +38,21 @@ class BasePlugin:
         if Parameters["Mode6"] == "Debug":
             Domoticz.Debugging(1)        
             Domoticz.Log("Debugging ON")
-#        if ('Kodi'  not in Images): Domoticz.Image('Kodi Icons.zip').Create()
+        if ('GarageClosed'  not in Images): Domoticz.Image('icons/GarageClosed.zip').Create()
 #        if ('KodiBlack' not in Images): Domoticz.Image('KodiBlack Icons.zip').Create()
 #        if ('KodiRound' not in Images): Domoticz.Image('KodiRound Icons.zip').Create()
 
         if (len(Devices) == 0):
-            Options = {"LevelActions": "|","LevelNames": "Open|Close","LevelOffHidden": "false","SelectorStyle": "1"}
-            Domoticz.Device(Name="garage-door-status", Unit=91, TypeName="Selector Switch", Switchtype=18, Image=13, Options=Options).Create()
+            Options = {"LevelActions": "|","LevelNames": "Open|Sluit","LevelOffHidden": "false","SelectorStyle": "1"}
+            Domoticz.Device(Name="garage-door-status", Unit=1, TypeName="Selector Switch", Switchtype=18, Image=13, Options=Options).Create()
             Domoticz.Log("Devices created.")
+
+        if (1 in Devices):
+            UpdateImage(1)
+            self.playerState = Devices[1].nValue
+
+
+
 
     def onStop(self):
         Domoticz.Debug("onStop called")
@@ -103,3 +110,11 @@ def onDisconnect(Connection):
 def onHeartbeat():
     global _plugin
     _plugin.onHeartbeat()
+
+# Synchronise images to match parameter in hardware page
+def UpdateImage(Unit):
+    if (Unit in Devices) and ('GarageClosed' in Images):
+        Domoticz.Debug("Device Image update: GarageClosed ")
+        if (Devices[Unit].Image != Images['GarageClosed'].ID):
+            Devices[Unit].Update(nValue=Devices[Unit].nValue, sValue=str(Devices[Unit].sValue), Image=Images['GarageClosed'].ID)
+    return
