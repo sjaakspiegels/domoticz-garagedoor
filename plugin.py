@@ -38,7 +38,7 @@ class BasePlugin:
         if Parameters["Mode6"] == "Debug":
             Domoticz.Debugging(1)        
             Domoticz.Log("Debugging ON")
-        if ('GarageClosed'  not in Images): Domoticz.Image('icons/GarageClosed.zip').Create()
+        if ('GarageClosed'  not in Images): Domoticz.Image('GarageDoorClosed.zip').Create()
 #        if ('KodiBlack' not in Images): Domoticz.Image('KodiBlack Icons.zip').Create()
 #        if ('KodiRound' not in Images): Domoticz.Image('KodiRound Icons.zip').Create()
 
