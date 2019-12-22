@@ -93,6 +93,13 @@ class BasePlugin:
         Domoticz.Debug("message topic=" + message.topic)
         Domoticz.Debug("message qos=" + message.qos)
         Domoticz.Debug("message retain flag=" + message.retain)
+        state = str(message.payload.decode("utf-8"))
+        if state == "open":
+            UpdateImage(1, 'GarageDoorOpen')
+        elif state == "gesloten":
+            UpdateImage(1, 'GarageDoorClosed')
+        else:
+            UpdateImage(1, 'GarageDoorHalfOpen')
 
     def onMessage(self, Connection, Data):
         Domoticz.Debug("onMessage called")
