@@ -27,9 +27,12 @@ import Domoticz
 import http.client
 import base64
 import json
+from mqtt import MqttClientSH2
 
 class BasePlugin:
  
+    mqttClient = None
+
     def __init__(self):
         return
 
@@ -41,6 +44,11 @@ class BasePlugin:
         if ('GarageDoorClosed'  not in Images): Domoticz.Image('GarageDoorClosed.zip').Create()
         if ('GarageDoorOpen' not in Images): Domoticz.Image('GarageDoorOpen.zip').Create()
         if ('GarageDoorHalfOpen' not in Images): Domoticz.Image('GarageDoorHalfOpen.zip').Create()
+
+#        self.mqttserveraddress = Parameters["Address"].strip()
+#        self.mqttserverport = Parameters["Port"].strip()
+#        self.mqttClient = MqttClientSH2(self.mqttserveraddress, self.mqttserverport, "", self.onMQTTConnected, self.onMQTTDisconnected, self.onMQTTPublish, self.onMQTTSubscribed)
+# username_pw_set(username=”roger”,password=”password”)
 
         if (len(Devices) == 0):
             Options = {"LevelActions": "|","LevelNames": "Open|Sluit","LevelOffHidden": "false","SelectorStyle": "1"}
@@ -68,6 +76,9 @@ class BasePlugin:
 
     def onDisconnect(self, Connection):
         Domoticz.Debug("onDisconnect called")
+
+    def onDeviceModified(self, Unit):
+        Domoticz.Debug("onDeviceModified called for Unit " + str(Unit))
 
     def onHeartbeat(self):
         Domoticz.Debug("onHeartbeat called")
@@ -110,6 +121,10 @@ def onDisconnect(Connection):
 def onHeartbeat():
     global _plugin
     _plugin.onHeartbeat()
+
+def onDeviceModified(Unit):
+    global _plugin
+    _plugin.onDeviceModified(Unit)
 
 # Synchronise images to match parameter in hardware page
 def UpdateImage(Unit):
