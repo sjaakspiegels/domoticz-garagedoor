@@ -72,6 +72,7 @@ class BasePlugin:
  
     def onStop(self):
         Domoticz.Debug("onStop called")
+        self.mqttClient.disconnect()
 
     def onConnect(self, Connection, Status, Description):
         Domoticz.Debug("onConnect called")
