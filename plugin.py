@@ -12,7 +12,7 @@
         <param field="Port" label="MQTT Port" width="150px" required="true" default="1883"/>
         <param field="Username" label="MQTT Username" width="150px" required="true" default=""/>
         <param field="Password" label="MQTT Password" width="150px" required="true" default="" password="true"/>
-        <param field="Mode1" label="MQTT Topic" width="150px" required="true" default=""/>
+        <param field="Mode1" label="MQTT State Topic" width="150px" required="true" default=""/>
         <param field="Mode6" label="Debug" width="75px">
             <options>
                 <option label="True" value="Debug" default="true"/>
@@ -36,6 +36,7 @@ class BasePlugin:
     mqttserverport = 1883
     mqttusername = ''
     mqttpassword = ''
+    mqttstatetopic = ''
 
     def __init__(self):
         return
@@ -53,6 +54,7 @@ class BasePlugin:
         self.mqttserverport = Parameters["Port"].strip()
         self.mqttusername = Parameters["Username"].strip()
         self.mqttpassword = Parameters["Password"].strip()
+        self.mqttstatetopic = Parameters["Model1"].strip()
 
         self.mqttClient = mqtt.Client()
         self.mqttClient.on_connect = onMQTTConnect
@@ -72,11 +74,12 @@ class BasePlugin:
  
     def onStop(self):
         Domoticz.Debug("onStop called")
+        self.mqttClient.unsubscribe(self.mqttstatetopic)
         self.mqttClient.disconnect()
 
     def onConnect(self, Connection, Status, Description):
         Domoticz.Debug("onConnect called")
-        self.mqttClient.subscribe("garagedeur/status",1)
+        self.mqttClient.subscribe(self.mqttstatetopic,1)
 
     def onMQTTConnect(self, client, userdata, flags, rc):
         Domoticz.Debug("onMQTTConnect called")
