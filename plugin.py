@@ -56,10 +56,11 @@ class BasePlugin:
 
         self.mqttClient = mqtt.Client()
         self.mqttClient.on_connect = onMQTTConnect
+        self.mqttClient.on_subscribe = onMQTTSubscribe
+        self.mqttClient._on_message = onMQTTmessage
         self.mqttClient.username_pw_set(username=self.mqttusername, password=self.mqttpassword)
-        Domoticz.Debug("Before connect MQTT")
         self.mqttClient.connect(self.mqttserveraddress, int(self.mqttserverport), 60)
-        Domoticz.Debug("After connect MQTT")
+        self.mqttClient.subscribe("garagedeur/status”,1)
         self.mqttClient.loop_start()
 
         if (len(Devices) == 0):
@@ -78,7 +79,16 @@ class BasePlugin:
 
     def onMQTTConnect(self, client, userdata, flags, rc):
         Domoticz.Debug("onMQTTConnect called")
-        Domoticz.Debug("Connected to " + self.mqttserveraddress + " with result cde {}".format(rc))
+        Domoticz.Debug("Connected to " + self.mqttserveraddress + " with result code {}".format(rc))
+
+    def onMQTTSubscribe(self, client, userdata, mid, granted_qos):
+        Domoticz.Debug("onMQTTSubscribe called")
+
+    def onMQTTmessage(self, client, userdata, message):
+        Domoticz.Debug("message received " ,str(message.payload.decode("utf-8")))
+        Domoticz.Debug("message topic=",message.topic)
+        Domoticz.Debug("message qos=",message.qos)
+        Domoticz.Debug("message retain flag=",message.retain)
 
     def onMessage(self, Connection, Data):
         Domoticz.Debug("onMessage called")
@@ -141,6 +151,13 @@ def onMQTTConnect(client, userdata, flags, rc):
     global _plugin
     _plugin.onMQTTConnect(client, userdata, flags, rc)
 
+def onMQTTSubscribe(client, userdata, mid, granted_qos):
+    global _plugin
+    _plugin.onMQTTSubscribe(client, userdata, mid, granted_qos)
+
+def onMQTTmessage(client, userdata, message):
+    global _plugin
+    _plugin.onMQTTmessage(client, userdata, message)
 
 # Synchronise images to match parameter in hardware page
 def UpdateImage(Unit, StateIcon):
