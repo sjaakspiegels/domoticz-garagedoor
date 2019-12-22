@@ -50,7 +50,7 @@ class BasePlugin:
         if ('GarageDoorHalfOpen' not in Images): Domoticz.Image('GarageDoorHalfOpen.zip').Create()
 
         self.mqttserveraddress = Parameters["Address"].strip()
-        self.mqttserverport = Parameters["Port"].strip().
+        self.mqttserverport = Parameters["Port"].strip()
         self.mqttusername = Parameters["Username"].strip()
         self.mqttpassword = Parameters["Password"].strip()
 
