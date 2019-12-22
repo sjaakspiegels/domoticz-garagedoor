@@ -1,0 +1,1 @@
+GarageDoorHalfOpen;GarageDoor;Garage door

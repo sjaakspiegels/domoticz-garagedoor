@@ -38,7 +38,7 @@ class BasePlugin:
         if Parameters["Mode6"] == "Debug":
             Domoticz.Debugging(1)        
             Domoticz.Log("Debugging ON")
-        if ('GarageClosed'  not in Images): Domoticz.Image('GarageDoorClosed.zip').Create()
+        if ('GarageDoorClosed'  not in Images): Domoticz.Image('GarageDoorClosed.zip').Create()
 #        if ('KodiBlack' not in Images): Domoticz.Image('KodiBlack Icons.zip').Create()
 #        if ('KodiRound' not in Images): Domoticz.Image('KodiRound Icons.zip').Create()
 
@@ -50,9 +50,6 @@ class BasePlugin:
         if (1 in Devices):
             UpdateImage(1)
             self.playerState = Devices[1].nValue
-
-
-
 
     def onStop(self):
         Domoticz.Debug("onStop called")
