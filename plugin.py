@@ -93,8 +93,6 @@ class BasePlugin:
     def onMQTTmessage(self, client, userdata, message):
         Domoticz.Debug("message received " + str(message.payload.decode("utf-8")))
         Domoticz.Debug("message topic=" + message.topic)
-        Domoticz.Debug("message qos=" + message.qos)
-        Domoticz.Debug("message retain flag=" + message.retain)
         state = str(message.payload.decode("utf-8"))
         if state == "open":
             UpdateImage(1, 'GarageDoorOpen')
