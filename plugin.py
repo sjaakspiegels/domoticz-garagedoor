@@ -9,8 +9,8 @@
 <plugin key="Garagedoor" name="Garagedoor" version="1.0.0" author="Sjaak" wikilink="" externallink="">
     <params>
         <param field="Address" label="MQTT Server" width="200px" required="true" default=""/>
-        <param field="Port" label="MQTT Port" width="150px" required="true" default=""/>
-        <param field="Username" label="MQTT Username" width="150px" required="true" default="1883"/>
+        <param field="Port" label="MQTT Port" width="150px" required="true" default="1883"/>
+        <param field="Username" label="MQTT Username" width="150px" required="true" default=""/>
         <param field="Password" label="MQTT Password" width="150px" required="true" default="" password="true"/>
         <param field="Mode1" label="MQTT Topic" width="150px" required="true" default=""/>
         <param field="Mode6" label="Debug" width="75px">
@@ -38,6 +38,14 @@ class BasePlugin:
         if Parameters["Mode6"] == "Debug":
             Domoticz.Debugging(1)        
             Domoticz.Log("Debugging ON")
+#        if ('Kodi'  not in Images): Domoticz.Image('Kodi Icons.zip').Create()
+#        if ('KodiBlack' not in Images): Domoticz.Image('KodiBlack Icons.zip').Create()
+#        if ('KodiRound' not in Images): Domoticz.Image('KodiRound Icons.zip').Create()
+
+        if (len(Devices) == 0):
+            Options = {"LevelActions": "|","LevelNames": "Open|Close","LevelOffHidden": "false","SelectorStyle": "1"}
+            Domoticz.Device(Name="garage-door-status", Unit=91, TypeName="Selector Switch", Switchtype=18, Image=13, Options=Options).Create()
+            Domoticz.Log("Devices created.")
 
     def onStop(self):
         Domoticz.Debug("onStop called")
