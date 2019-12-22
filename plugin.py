@@ -71,7 +71,10 @@ class BasePlugin:
 
     def onHeartbeat(self):
         Domoticz.Debug("onHeartbeat called")
- 
+        if (1 in Devices):
+            Domoticz.Debug("Device 1 exists")
+        if ('GarageDoorClosed' in Images):
+            Domoticz.Debug("Image closed exists")
 
 global _plugin
 _plugin = BasePlugin()
