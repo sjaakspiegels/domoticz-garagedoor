@@ -27,10 +27,15 @@ import Domoticz
 import http.client
 import base64
 import json
+import paho.mqtt.client as mqtt
 
 class BasePlugin:
  
     mqttClient = None
+    mqttserveraddress = 'localhost'
+    mqttserverport = 1883
+    mqttusername = ''
+    mqttpassword = ''
 
     def __init__(self):
         return
@@ -44,8 +49,18 @@ class BasePlugin:
         if ('GarageDoorOpen' not in Images): Domoticz.Image('GarageDoorOpen.zip').Create()
         if ('GarageDoorHalfOpen' not in Images): Domoticz.Image('GarageDoorHalfOpen.zip').Create()
 
-#        self.mqttserveraddress = Parameters["Address"].strip()
-#        self.mqttserverport = Parameters["Port"].strip()
+        self.mqttserveraddress = Parameters["Address"].strip()
+        self.mqttserverport = Parameters["Port"].strip()
+        self.mqttusername = Parameters["Username"].strip()
+        self.mqttpassword = Parameters["Password"].strip()
+
+        self.mqttClient = mqtt.Client()
+        self.mqttClient.on_connect = onMQTTConnect
+        self.mqttClient.username_pw_set(username=self.mqttusername, password=self.mqttpassword)
+        Domoticz.Debug("Before connect MQTT")
+        self.mqttClient.connect(self.mqttserveraddress, self.mqttserverport, 60)
+        Domoticz.Debug("After connect MQTT")
+#        self.mqttClient.loop_start()
 #        self.mqttClient = MqttClientSH2(self.mqttserveraddress, self.mqttserverport, "", self.onMQTTConnected, self.onMQTTDisconnected, self.onMQTTPublish, self.onMQTTSubscribed)
 # username_pw_set(username=”roger”,password=”password”)
 
@@ -55,14 +70,16 @@ class BasePlugin:
             Domoticz.Log("Devices created.")
 
         if (1 in Devices):
-            UpdateImage(1)
-            self.playerState = Devices[1].nValue
-
+            UpdateImage(1, 'GarageDoorHalfOpen')
+ 
     def onStop(self):
         Domoticz.Debug("onStop called")
 
     def onConnect(self, Connection, Status, Description):
         Domoticz.Debug("onConnect called")
+
+    def onMQTTConnect(self, client, userdata, flags, rc):
+        Domoticz.Debug("onMQTTConnect called")
 
     def onMessage(self, Connection, Data):
         Domoticz.Debug("onMessage called")
@@ -125,10 +142,15 @@ def onDeviceModified(Unit):
     global _plugin
     _plugin.onDeviceModified(Unit)
 
+def onMQTTConnect(client, userdata, flags, rc):
+    global _plugin
+    _plugin.onMQTTConnect(client, userdata, flags, rc)
+
+
 # Synchronise images to match parameter in hardware page
-def UpdateImage(Unit):
-    if (Unit in Devices) and ('GarageDoorClosed' in Images):
-        Domoticz.Debug("Device Image update: GarageDoorClosed ")
-        if (Devices[Unit].Image != Images['GarageDoorClosed'].ID):
-            Devices[Unit].Update(nValue=Devices[Unit].nValue, sValue=str(Devices[Unit].sValue), Image=Images['GarageDoorClosed'].ID)
+def UpdateImage(Unit, StateIcon):
+    if (Unit in Devices) and (StateIcon in Images):
+        Domoticz.Debug("Device Image update")
+        if (Devices[Unit].Image != Images[StateIcon].ID):
+            Devices[Unit].Update(nValue=Devices[Unit].nValue, sValue=str(Devices[Unit].sValue), Image=Images[StateIcon].ID)
     return
