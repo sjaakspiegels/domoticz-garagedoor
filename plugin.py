@@ -27,7 +27,6 @@ import Domoticz
 import http.client
 import base64
 import json
-from mqtt import MqttClientSH2
 
 class BasePlugin:
  
