@@ -39,8 +39,8 @@ class BasePlugin:
             Domoticz.Debugging(1)        
             Domoticz.Log("Debugging ON")
         if ('GarageDoorClosed'  not in Images): Domoticz.Image('GarageDoorClosed.zip').Create()
-#        if ('KodiBlack' not in Images): Domoticz.Image('KodiBlack Icons.zip').Create()
-#        if ('KodiRound' not in Images): Domoticz.Image('KodiRound Icons.zip').Create()
+        if ('GarageDoorOpen' not in Images): Domoticz.Image('GarageDoorOpen.zip').Create()
+        if ('GarageDoorHalfOpen' not in Images): Domoticz.Image('GarageDoorHalfOpen.zip').Create()
 
         if (len(Devices) == 0):
             Options = {"LevelActions": "|","LevelNames": "Open|Sluit","LevelOffHidden": "false","SelectorStyle": "1"}
