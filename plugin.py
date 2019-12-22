@@ -50,7 +50,7 @@ class BasePlugin:
         if ('GarageDoorHalfOpen' not in Images): Domoticz.Image('GarageDoorHalfOpen.zip').Create()
 
         self.mqttserveraddress = Parameters["Address"].strip()
-        self.mqttserverport = Parameters["Port"].strip()
+        self.mqttserverport = Parameters["Port"].strip().
         self.mqttusername = Parameters["Username"].strip()
         self.mqttpassword = Parameters["Password"].strip()
 
@@ -58,7 +58,7 @@ class BasePlugin:
         self.mqttClient.on_connect = onMQTTConnect
         self.mqttClient.username_pw_set(username=self.mqttusername, password=self.mqttpassword)
         Domoticz.Debug("Before connect MQTT")
-        self.mqttClient.connect(self.mqttserveraddress, self.mqttserverport, 60)
+        self.mqttClient.connect(self.mqttserveraddress, int(self.mqttserverport), 60)
         Domoticz.Debug("After connect MQTT")
 #        self.mqttClient.loop_start()
 #        self.mqttClient = MqttClientSH2(self.mqttserveraddress, self.mqttserverport, "", self.onMQTTConnected, self.onMQTTDisconnected, self.onMQTTPublish, self.onMQTTSubscribed)
