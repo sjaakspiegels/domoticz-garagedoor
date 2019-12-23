@@ -122,7 +122,7 @@ class BasePlugin:
                 self.garagedoor_is_close = False
 
         if self.garagedoor_is_close:
-            self.garagedoorstate = 'GarageDoorClose'    
+            self.garagedoorstate = 'GarageDoorClosed'    
         elif self.garagedoor_is_open:
             self.garagedoorstate = 'GarageDoorOpen'    
         else:
