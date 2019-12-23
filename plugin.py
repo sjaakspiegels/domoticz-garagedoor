@@ -98,21 +98,27 @@ class BasePlugin:
         Domoticz.Debug("onMQTTSubscribe called")
 
     def onMQTTmessage(self, client, userdata, message):
-        payload = str(message.payload.decode("utf-8"))
-        Domoticz.Debug("message received " + payload)
         Domoticz.Debug("message topic=" + message.topic)
         payload = str(message.payload.decode("utf-8"))
+        Domoticz.Debug("message received " + payload)
+        payload = str(message.payload.decode("utf-8"))
         if message.topic == self.mqttstatetopic + '/cmd/POWER' + self.mqttswitchopen:
+            Domoticz.Debug("Open switch")
             if payload == 'ON':
+                Domoticz.Debug("Garage door is open")
                 self.garagedoor_is_open = True
                 self.garagedoor_is_closed = False
             elif payload == 'OFF':
+                Domoticz.Debug("Garage door is not open")
                 self.garagedoor_is_open = False
         if message.topic == self.mqttstatetopic + '/cmd/POWER' + self.mqttswitchclosed:
+            Domoticz.Debug("Closed switch")
             if payload == 'ON':
+                Domoticz.Debug("Garage door is closed")
                 self.garagedoor_is_closed = True
                 self.garagedoor_is_open = False
             elif payload == 'OFF':
+                Domoticz.Debug("Garage door is not closed")
                 self.garagedoor_is_close = False
 
         if self.garagedoor_is_close:
