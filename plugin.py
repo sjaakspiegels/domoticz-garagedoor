@@ -121,7 +121,7 @@ class BasePlugin:
                 Domoticz.Debug("Garage door is not closed")
                 self.garagedoor_is_close = False
 
-        if self.garagedoor_is_close:
+        if self.garagedoor_is_closed:
             self.garagedoorstate = 'GarageDoorClosed'    
         elif self.garagedoor_is_open:
             self.garagedoorstate = 'GarageDoorOpen'    
