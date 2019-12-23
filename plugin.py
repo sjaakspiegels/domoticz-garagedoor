@@ -102,7 +102,7 @@ class BasePlugin:
         payload = str(message.payload.decode("utf-8"))
         Domoticz.Debug("message received " + payload)
         payload = str(message.payload.decode("utf-8"))
-        if message.topic == self.mqttstatetopic.replace("#",'/cmnd/POWER' + self.mqttswitchopen):
+        if message.topic == self.mqttstatetopic.replace("#",'cmnd/POWER' + self.mqttswitchopen):
             Domoticz.Debug("Open switch")
             if payload == 'ON':
                 Domoticz.Debug("Garage door is open")
@@ -111,7 +111,7 @@ class BasePlugin:
             elif payload == 'OFF':
                 Domoticz.Debug("Garage door is not open")
                 self.garagedoor_is_open = False
-        if message.topic == self.mqttstatetopic.replace('#','/cmnd/POWER' + self.mqttswitchclosed):
+        if message.topic == self.mqttstatetopic.replace('#','cmnd/POWER' + self.mqttswitchclosed):
             Domoticz.Debug("Closed switch")
             if payload == 'ON':
                 Domoticz.Debug("Garage door is closed")
