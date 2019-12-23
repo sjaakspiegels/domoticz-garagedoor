@@ -202,7 +202,7 @@ def onMQTTmessage(client, userdata, message):
 # Synchronise images to match parameter in hardware page
 def UpdateImage(Unit, StateIcon):
     if (Unit in Devices) and (StateIcon in Images):
-        Domoticz.Debug("Device Image update")
+        Domoticz.Debug("Device Image update to " + StateIcon)
         if (Devices[Unit].Image != Images[StateIcon].ID):
             Devices[Unit].Update(nValue=Devices[Unit].nValue, sValue=str(Devices[Unit].sValue), Image=Images[StateIcon].ID)
     else:
