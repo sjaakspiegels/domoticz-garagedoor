@@ -63,7 +63,7 @@ class BasePlugin:
             Domoticz.Log("Devices created.")
 
         if (1 in Devices):
-            UpdateImage(1, garagedoorstate)
+            UpdateImage(1, self.garagedoorstate)
             
         self.mqttserveraddress = Parameters["Address"].strip()
         self.mqttserverport = Parameters["Port"].strip()
