@@ -13,6 +13,8 @@
         <param field="Username" label="MQTT Username" width="150px" required="true" default=""/>
         <param field="Password" label="MQTT Password" width="150px" required="true" default="" password="true"/>
         <param field="Mode1" label="MQTT State Topic" width="150px" required="true" default=""/>
+        <param field="Mode2" label="Switch number opened" width="150px" required="true" default="3"/>
+        <param field="Mode3" label="Switch number closed" width="150px" required="true" default="4"/>
         <param field="Mode6" label="Debug" width="75px">
             <options>
                 <option label="True" value="Debug" default="true"/>
@@ -37,7 +39,9 @@ class BasePlugin:
     mqttusername = ''
     mqttpassword = ''
     mqttstatetopic = ''
-
+    mqttswitchopen = 3
+    mqttswitchclosed = 4
+   
     def __init__(self):
         return
 
@@ -63,6 +67,8 @@ class BasePlugin:
         self.mqttusername = Parameters["Username"].strip()
         self.mqttpassword = Parameters["Password"].strip()
         self.mqttstatetopic = Parameters["Mode1"].strip()
+        self.mqttswitchopen = Parameters["Mode2"].strip().toInt()
+        self.mqttswitchclosed = Parameters["Mode4"].strip().toInt()
 
         self.mqttClient = mqtt.Client()
         self.mqttClient.on_connect = onMQTTConnect
