@@ -39,9 +39,12 @@ class BasePlugin:
     mqttusername = ''
     mqttpassword = ''
     mqttstatetopic = ''
-    mqttswitchopen = 3
-    mqttswitchclosed = 4
-   
+    mqttswitchopen = ''
+    mqttswitchclosed = ''
+    garagedoorstate = 'GarageDoorHalfOpen'
+    garagedoor_is_open = False
+    garagedoor_is_closed = False
+
     def __init__(self):
         return
 
@@ -60,15 +63,15 @@ class BasePlugin:
             Domoticz.Log("Devices created.")
 
         if (1 in Devices):
-            UpdateImage(1, 'GarageDoorHalfOpen')
+            UpdateImage(1, garagedoorstate)
             
         self.mqttserveraddress = Parameters["Address"].strip()
         self.mqttserverport = Parameters["Port"].strip()
         self.mqttusername = Parameters["Username"].strip()
         self.mqttpassword = Parameters["Password"].strip()
         self.mqttstatetopic = Parameters["Mode1"].strip()
-        self.mqttswitchopen = int(Parameters["Mode2"].strip())
-        self.mqttswitchclosed = int(Parameters["Mode3"].strip())
+        self.mqttswitchopen = Parameters["Mode2"].strip()
+        self.mqttswitchclosed = Parameters["Mode3"].strip()
 
         self.mqttClient = mqtt.Client()
         self.mqttClient.on_connect = onMQTTConnect
@@ -78,8 +81,6 @@ class BasePlugin:
         self.mqttClient.connect(self.mqttserveraddress, int(self.mqttserverport), 60)        
         self.mqttClient.loop_start()
 
-
- 
     def onStop(self):
         Domoticz.Debug("onStop called")
         self.mqttClient.unsubscribe(self.mqttstatetopic)
@@ -97,15 +98,31 @@ class BasePlugin:
         Domoticz.Debug("onMQTTSubscribe called")
 
     def onMQTTmessage(self, client, userdata, message):
-        Domoticz.Debug("message received " + str(message.payload.decode("utf-8")))
+        payload = str(message.payload.decode("utf-8"))
+        Domoticz.Debug("message received " + payload)
         Domoticz.Debug("message topic=" + message.topic)
-        state = str(message.payload.decode("utf-8"))
-        if state == "open":
-            UpdateImage(1, 'GarageDoorOpen')
-        elif state == "closed":
-            UpdateImage(1, 'GarageDoorClosed')
+        payload = str(message.payload.decode("utf-8"))
+        if message.topic == self.mqttstatetopic + '/cmd/POWER' + self.mqttswitchopen:
+            if payload == 'ON':
+                self.garagedoor_is_open = True
+                self.garagedoor_is_closed = False
+            elif payload == 'OFF':
+                self.garagedoor_is_open = False
+        if message.topic == self.mqttstatetopic + '/cmd/POWER' + self.mqttswitchclosed:
+            if payload == 'ON':
+                self.garagedoor_is_closed = True
+                self.garagedoor_is_open = False
+            elif payload == 'OFF':
+                self.garagedoor_is_close = False
+
+        if self.garagedoor_is_close:
+            self.garagedoorstate = 'GarageDoorClose'    
+        elif self.garagedoor_is_open:
+            self.garagedoorstate = 'GarageDoorOpen'    
         else:
-            UpdateImage(1, 'GarageDoorHalfOpen')
+            self.garagedoorstate = 'GarageDoorHalfOpen'    
+        UpdateImage(1, self.garagedoorstate)
+
 
     def onMessage(self, Connection, Data):
         Domoticz.Debug("onMessage called")
