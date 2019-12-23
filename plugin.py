@@ -67,8 +67,8 @@ class BasePlugin:
         self.mqttusername = Parameters["Username"].strip()
         self.mqttpassword = Parameters["Password"].strip()
         self.mqttstatetopic = Parameters["Mode1"].strip()
-        self.mqttswitchopen = Parameters["Mode2"].strip().toInt()
-        self.mqttswitchclosed = Parameters["Mode4"].strip().toInt()
+        self.mqttswitchopen = int(Parameters["Mode2"].strip())
+        self.mqttswitchclosed = int(Parameters["Mode4"].strip()
 
         self.mqttClient = mqtt.Client()
         self.mqttClient.on_connect = onMQTTConnect
