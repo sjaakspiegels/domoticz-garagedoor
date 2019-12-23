@@ -103,7 +103,7 @@ class BasePlugin:
         Domoticz.Debug("message received " + payload)
         payload = str(message.payload.decode("utf-8"))
         if message.topic == self.mqttstatetopic.replace("#",'cmnd/POWER' + self.mqttswitchopen):
-            Domoticz.Debug("Open switch")
+            Domoticz.Debug("Power Open switch")
             if payload == 'ON':
                 Domoticz.Debug("Garage door is open")
                 self.garagedoor_is_open = True
@@ -112,13 +112,28 @@ class BasePlugin:
                 Domoticz.Debug("Garage door is not open")
                 self.garagedoor_is_open = False
         if message.topic == self.mqttstatetopic.replace('#','cmnd/POWER' + self.mqttswitchclosed):
-            Domoticz.Debug("Closed switch")
+            Domoticz.Debug("Power Closed switch")
             if payload == 'ON':
                 Domoticz.Debug("Garage door is closed")
                 self.garagedoor_is_closed = True
                 self.garagedoor_is_open = False
             elif payload == 'OFF':
                 Domoticz.Debug("Garage door is not closed")
+                self.garagedoor_is_closed = False
+
+        if message.topic == self.mqttstatetopic.replace("#",'SENSOR'):
+            json_msg = json.loads(payload)
+            if json_msg['Switch' + self.mqttswitchopen] == 'ON':
+                Domoticz.Debug("Sensor Open switch")
+                self.garagedoor_is_open = True
+                self.garagedoor_is_closed = False
+            else:
+                self.garagedoor_is_open = False
+            if json_msg['Switch' + self.mqttswitchclosed] == 'ON':
+                Domoticz.Debug("Sensor Open switch")
+                self.garagedoor_is_open = False
+                self.garagedoor_is_closed = True
+            else:
                 self.garagedoor_is_closed = False
 
         if self.garagedoor_is_closed:
@@ -204,7 +219,7 @@ def UpdateImage(Unit, StateIcon):
     if (Unit in Devices) and (StateIcon in Images):
         Domoticz.Debug("Device Image update to " + StateIcon)
         if (Devices[Unit].Image != Images[StateIcon].ID):
-            Devices[Unit].Update(nValue=Devices[Unit].nValue, sValue=str(Devices[Unit].sValue), Image=Images[StateIcon].ID)
+            Devices[Unit].Update(nValue=Devices[Unit].nValue, sValue=StateIcon, Image=Images[StateIcon].ID)
     else:
         Domoticz.Debug("Error update icon")
     return
