@@ -119,6 +119,7 @@ class BasePlugin:
         if message.topic == self.mqttstatetopic.replace("#",'SENSOR'):
             Domoticz.Debug("Sensor message")
             json_msg = json.loads(payload)
+            Domoticz.Debug("Sensor message: " + str(json_msg))
             self.updateGarageDoorState(json_msg['Switch' + self.mqttswitchclosed] == 'ON', json_msg['Switch' + self.mqttswitchopen] == 'ON')
 
     def updateGarageDoorState(self, GarageDoorClosed, GarageDoorOpen):
