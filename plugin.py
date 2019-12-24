@@ -122,6 +122,7 @@ class BasePlugin:
             self.updateGarageDoorState(json_msg['Switch' + self.mqttswitchclosed] == 'ON', json_msg['Switch' + self.mqttswitchopen] == 'ON')
 
     def updateGarageDoorState(self, GarageDoorClosed, GarageDoorOpen):
+        Domoticz.Debug("Update garage door state " + str(GarageDoorClosed) + ", " + str(GarageDoorOpen))
         if GarageDoorClosed is not None:
             if GarageDoorClosed:
                 self.garagedoor_is_open = False
