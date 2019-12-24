@@ -122,16 +122,22 @@ class BasePlugin:
             self.updateGarageDoorState(json_msg['Switch' + self.mqttswitchclosed] == 'ON', json_msg['Switch' + self.mqttswitchopen] == 'ON')
 
     def updateGarageDoorState(self, GarageDoorClosed, GarageDoorOpen):
-        if GarageDoorClosed:
-            self.garagedoor_is_open = False
-            self.garagedoor_is_closed = True
-        elif GarageDoorClosed != None:
-            self.garagedoor_is_closed = False
-        if GarageDoorOpen:
-            self.garagedoor_is_open = True
-            self.garagedoor_is_closed = False
-        elif GarageDoorOpen != None:
-            self.garagedoor_is_open = False
+        if GarageDoorClosed is not None:
+            if GarageDoorClosed:
+                self.garagedoor_is_open = False
+                self.garagedoor_is_closed = True
+            else:
+                self.garagedoor_is_closed = False
+
+        if GarageDoorOpen is not None:
+            if GarageDoorOpen:
+                self.garagedoor_is_open = True
+                self.garagedoor_is_closed = False
+            else:
+                self.garagedoor_is_open = False
+
+        Domoticz.Log("Garage door current state: " + self.garagedoorstate)
+
 
         state = self.garagedoorstate
         if self.garagedoor_is_closed:
@@ -140,9 +146,11 @@ class BasePlugin:
             self.garagedoorstate = 'GarageDoorOpen'    
         else:
             self.garagedoorstate = 'GarageDoorHalfOpen'    
-        
+
+        Domoticz.Log("Garage door new state: " + self.garagedoorstate)
+
         if state != self.garagedoorstate:
-            Domoticz.Log("Garage door " + state + " => " + mself.garagedoorstate)
+            Domoticz.Log("Garage door " + state + " => " + self.garagedoorstate)
             UpdateImage(1, self.garagedoorstate)
 
     def onMessage(self, Connection, Data):
