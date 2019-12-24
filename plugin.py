@@ -120,9 +120,9 @@ class BasePlugin:
             Domoticz.Debug("Sensor message")
             json_msg = json.loads(payload)
             Domoticz.Debug("Sensor message: " + str(json_msg))
-            msg_closed = json_msg['Switch' + self.mqttswitchclosed] == 'ON'
+            msg_closed = json_msg['Switch' + self.mqttswitchclosed]
             Domoticz.Debug("Switch closed " + str(msg_closed))
-            msg_open = json_msg['Switch' + self.mqttswitchopen] == 'ON'
+            msg_open = json_msg['Switch' + self.mqttswitchopen]
             Domoticz.Debug("Switch open " + str(msg_open))
             self.updateGarageDoorState(json_msg['Switch' + self.mqttswitchclosed] == 'ON', json_msg['Switch' + self.mqttswitchopen] == 'ON')
 
