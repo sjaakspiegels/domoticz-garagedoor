@@ -13,8 +13,10 @@
         <param field="Username" label="MQTT Username" width="150px" required="true" default=""/>
         <param field="Password" label="MQTT Password" width="150px" required="true" default="" password="true"/>
         <param field="Mode1" label="MQTT State Topic" width="150px" required="true" default=""/>
-        <param field="Mode2" label="Switch number opened" width="150px" required="true" default="3"/>
-        <param field="Mode3" label="Switch number closed" width="150px" required="true" default="4"/>
+        <param field="Mode2" label="Button# open" width="150px" required="true" default="1"/>
+        <param field="Mode3" label="Button# close" width="150px" required="true" default="2"/>
+        <param field="Mode4" label="Switch# opened" width="150px" required="true" default="3"/>
+        <param field="Mode5" label="Switch# closed" width="150px" required="true" default="4"/>
         <param field="Mode6" label="Debug" width="75px">
             <options>
                 <option label="True" value="Debug" default="true"/>
@@ -39,6 +41,8 @@ class BasePlugin:
     mqttusername = ''
     mqttpassword = ''
     mqttstatetopic = ''
+    mqttbuttonopen = ''
+    mqttbuttonclose = ''
     mqttswitchopen = ''
     mqttswitchclosed = ''
     garagedoorstate = 'GarageDoorHalfOpen'
@@ -70,8 +74,10 @@ class BasePlugin:
         self.mqttusername = Parameters["Username"].strip()
         self.mqttpassword = Parameters["Password"].strip()
         self.mqttstatetopic = Parameters["Mode1"].strip()
-        self.mqttswitchopen = Parameters["Mode2"].strip()
-        self.mqttswitchclosed = Parameters["Mode3"].strip()
+        self.mqttbuttonopen = Parameters["Mode2"].strip()
+        self.mqttbuttonclose = Parameters["Mode3"].strip()
+        self.mqttswitchopen = Parameters["Mode4"].strip()
+        self.mqttswitchclosed = Parameters["Mode5"].strip()
 
         self.mqttClient = mqtt.Client()
         self.mqttClient.on_connect = onMQTTConnect
@@ -101,56 +107,56 @@ class BasePlugin:
         Domoticz.Debug("message topic=" + message.topic)
         payload = str(message.payload.decode("utf-8"))
         Domoticz.Debug("message received " + payload)
-        payload = str(message.payload.decode("utf-8"))
-        if message.topic == self.mqttstatetopic.replace("#",'cmnd/POWER' + self.mqttswitchopen):
+
+        if message.topic == self.mqttstatetopic.replace("#",'cmnd/POWER' + self.mqttswitchclosed):
+            Domoticz.Debug("Power Close switch")
+            self.updateGarageDoorState(payload == 'ON', None)
+
+        if message.topic == self.mqttstatetopic.replace('#','cmnd/POWER' + self.mqttswitchopen):
             Domoticz.Debug("Power Open switch")
-            if payload == 'ON':
-                Domoticz.Debug("Garage door is open")
-                self.garagedoor_is_open = True
-                self.garagedoor_is_closed = False
-            elif payload == 'OFF':
-                Domoticz.Debug("Garage door is not open")
-                self.garagedoor_is_open = False
-        if message.topic == self.mqttstatetopic.replace('#','cmnd/POWER' + self.mqttswitchclosed):
-            Domoticz.Debug("Power Closed switch")
-            if payload == 'ON':
-                Domoticz.Debug("Garage door is closed")
-                self.garagedoor_is_closed = True
-                self.garagedoor_is_open = False
-            elif payload == 'OFF':
-                Domoticz.Debug("Garage door is not closed")
-                self.garagedoor_is_closed = False
+            self.updateGarageDoorState(None, payload == 'ON')
 
         if message.topic == self.mqttstatetopic.replace("#",'SENSOR'):
             Domoticz.Debug("Sensor message")
             json_msg = json.loads(payload)
-            if json_msg['Switch' + self.mqttswitchopen] == 'ON':
-                Domoticz.Debug("Sensor Open switch")
-                self.garagedoor_is_open = True
-                self.garagedoor_is_closed = False
-            else:
-                self.garagedoor_is_open = False
-            if json_msg['Switch' + self.mqttswitchclosed] == 'ON':
-                Domoticz.Debug("Sensor Open switch")
-                self.garagedoor_is_open = False
-                self.garagedoor_is_closed = True
-            else:
-                self.garagedoor_is_closed = False
+            self.updateGarageDoorState(json_msg['Switch' + self.mqttswitchclosed] == 'ON', json_msg['Switch' + self.mqttswitchopen] == 'ON')
 
+    def updateGarageDoorState(self, GarageDoorClosed, GarageDoorOpen):
+        if GarageDoorClosed:
+            self.garagedoor_is_open = False
+            self.garagedoor_is_closed = True
+        elif GarageDoorClosed != None:
+            self.garagedoor_is_closed = False
+        if GarageDoorOpen:
+            self.garagedoor_is_open = True
+            self.garagedoor_is_closed = False
+        elif GarageDoorOpen != None:
+            self.garagedoor_is_open = False
+
+        state = self.garagedoorstate
         if self.garagedoor_is_closed:
             self.garagedoorstate = 'GarageDoorClosed'    
         elif self.garagedoor_is_open:
             self.garagedoorstate = 'GarageDoorOpen'    
         else:
             self.garagedoorstate = 'GarageDoorHalfOpen'    
-        UpdateImage(1, self.garagedoorstate)
-
+        
+        if state != self.garagedoorstate:
+            Domoticz.Log("Garage door " + state + " => " self.garagedoorstate)
+            UpdateImage(1, self.garagedoorstate)
 
     def onMessage(self, Connection, Data):
         Domoticz.Debug("onMessage called")
 
     def onCommand(self, Unit, Command, Level, Hue):
         Domoticz.Debug("onCommand called for Unit " + str(Unit) + ": Parameter '" + str(Command) + "', Level: " + str(Level))
+        if Level == 10:
+            Domoticz.Log("Garage door open")
+            self.mqttClient.publish(self.mqttstatetopic.replace('#','POWER' + self.mqttbuttonopen), payload = 'ON', qos=1)
+        elif Level == 20:
+            Domoticz.Log("Garage door close")
+            self.mqttClient.publish(self.mqttstatetopic.replace('#','POWER' + self.mqttbuttonclose), payload = 'ON', qos=1)
+
 
     def onNotification(self, Name, Subject, Text, Status, Priority, Sound, ImageFile):
         Domoticz.Debug("Notification: " + Name + "," + Subject + "," + Text + "," + Status + "," + str(Priority) + "," + Sound + "," + ImageFile)
