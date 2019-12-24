@@ -142,7 +142,7 @@ class BasePlugin:
             self.garagedoorstate = 'GarageDoorHalfOpen'    
         
         if state != self.garagedoorstate:
-            Domoticz.Log("Garage door " + state + " => " self.garagedoorstate)
+            Domoticz.Log("Garage door " + state + " => " + mself.garagedoorstate)
             UpdateImage(1, self.garagedoorstate)
 
     def onMessage(self, Connection, Data):
