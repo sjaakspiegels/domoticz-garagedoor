@@ -159,10 +159,10 @@ class BasePlugin:
         Domoticz.Debug("onCommand called for Unit " + str(Unit) + ": Parameter '" + str(Command) + "', Level: " + str(Level))
         if Level == 10:
             Domoticz.Log("Garage door open")
-            self.mqttClient.publish(self.mqttstatetopic.replace("#","POWER" + self.mqttbuttonopen), payload = "ON", qos=1)
+            self.mqttClient.publish("cmnd/" + self.mqttstatetopic.replace("#","power" + self.mqttbuttonopen), payload = "on", qos=1)
         elif Level == 20:
             Domoticz.Log("Garage door close")
-            self.mqttClient.publish(self.mqttstatetopic.replace("#","POWER" + self.mqttbuttonclose), payload = "ON", qos=1)
+            self.mqttClient.publish("cmnd/" + self.mqttstatetopic.replace("#","power" + self.mqttbuttonclose), payload = "on", qos=1)
 
 
     def onNotification(self, Name, Subject, Text, Status, Priority, Sound, ImageFile):
