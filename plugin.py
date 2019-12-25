@@ -36,16 +36,16 @@ import paho.mqtt.client as mqtt
 class BasePlugin:
  
     mqttClient = None
-    mqttserveraddress = 'localhost'
+    mqttserveraddress = "localhost"
     mqttserverport = 1883
-    mqttusername = ''
-    mqttpassword = ''
-    mqttstatetopic = ''
-    mqttbuttonopen = ''
-    mqttbuttonclose = ''
-    mqttswitchopen = ''
-    mqttswitchclosed = ''
-    garagedoorstate = 'GarageDoorHalfOpen'
+    mqttusername = ""
+    mqttpassword = ""
+    mqttstatetopic = ""
+    mqttbuttonopen = ""
+    mqttbuttonclose = ""
+    mqttswitchopen = ""
+    mqttswitchclosed = ""
+    garagedoorstate = "GarageDoorHalfOpen"
     garagedoor_is_open = False
     garagedoor_is_closed = False
 
@@ -57,18 +57,17 @@ class BasePlugin:
         if Parameters["Mode6"] == "Debug":
             Domoticz.Debugging(1)        
             Domoticz.Log("Debugging ON")
-        if ('GarageDoorClosed'  not in Images): Domoticz.Image('GarageDoorClosed.zip').Create()
-        if ('GarageDoorOpen' not in Images): Domoticz.Image('GarageDoorOpen.zip').Create()
-        if ('GarageDoorHalfOpen' not in Images): Domoticz.Image('GarageDoorHalfOpen.zip').Create()
+        if ("GarageDoorClosed"  not in Images): Domoticz.Image("GarageDoorClosed.zip").Create()
+        if ("GarageDoorOpen" not in Images): Domoticz.Image("GarageDoorOpen.zip").Create()
+        if ("GarageDoorHalfOpen" not in Images): Domoticz.Image("GarageDoorHalfOpen.zip").Create()
 
         if (len(Devices) == 0):
-            Options = {"LevelActions": "|","LevelNames": "Open|Sluit","LevelOffHidden": "false","SelectorStyle": "1"}
-            Domoticz.Device(Name="garage-door-status", Unit=1, TypeName="Selector Switch", Switchtype=18, Image=13, Options=Options).Create()
+            Options = {"LevelActions": "|","LevelNames": "Open|Sluit","LevelOffHidden": "true","SelectorStyle": "0"}
+            Domoticz.Device(Name="garage-door-status", Unit=1, TypeName="Selector Switch", Switchtype=18, Options=Options).Create()
             Domoticz.Log("Devices created.")
 
-        if (1 in Devices):
-            UpdateImage(1, self.garagedoorstate)
-            
+        self.updateGarageDoorState(None, None)
+
         self.mqttserveraddress = Parameters["Address"].strip()
         self.mqttserverport = Parameters["Port"].strip()
         self.mqttusername = Parameters["Username"].strip()
@@ -112,19 +111,19 @@ class BasePlugin:
             Domoticz.Debug("Power Close switch")
             self.updateGarageDoorState(payload == 'ON', None)
 
-        if message.topic == self.mqttstatetopic.replace('#','cmnd/POWER' + self.mqttswitchopen):
+        if message.topic == self.mqttstatetopic.replace("#","cmnd/POWER" + self.mqttswitchopen):
             Domoticz.Debug("Power Open switch")
-            self.updateGarageDoorState(None, payload == 'ON')
+            self.updateGarageDoorState(None, payload == "ON")
 
         if message.topic == self.mqttstatetopic.replace("#",'SENSOR'):
             Domoticz.Debug("Sensor message")
             json_msg = json.loads(payload)
             Domoticz.Debug("Sensor message: " + str(json_msg))
             msg_closed = json_msg['Switch3']
-            Domoticz.Debug("Switch closed " + str(msg_closed))
+            Domoticz.Debug("Switch closed " + str(msg_closed)+ self.mqttswitchclosed)
             msg_open = json_msg['Switch4']
-            Domoticz.Debug("Switch open " + str(msg_open))
-            self.updateGarageDoorState(json_msg['Switch' + self.mqttswitchclosed] == 'ON', json_msg['Switch' + self.mqttswitchopen] == 'ON')
+            Domoticz.Debug("Switch open " + str(msg_open) + self.mqttswitchopen)
+            self.updateGarageDoorState(json_msg["Switch" + self.mqttswitchclosed] == "ON", json_msg["Switch" + self.mqttswitchopen] == "ON")
 
     def updateGarageDoorState(self, GarageDoorClosed, GarageDoorOpen):
         Domoticz.Debug("Update garage door state " + str(GarageDoorClosed) + ", " + str(GarageDoorOpen))
