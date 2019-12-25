@@ -97,7 +97,8 @@ class BasePlugin:
     def onMQTTConnect(self, client, userdata, flags, rc):
         Domoticz.Debug("onMQTTConnect called")
         Domoticz.Debug("Connected to " + self.mqttserveraddress + " with result code {}".format(rc))
-        self.mqttClient.subscribe(self.mqttstatetopic,1)
+        self.mqttClient.subscribe("tele/" + self.mqttstatetopic,1)
+        self.mqttClient.subscribe("cmnd/" + self.mqttstatetopic,1)
 
     def onMQTTSubscribe(self, client, userdata, mid, granted_qos):
         Domoticz.Debug("onMQTTSubscribe called")
@@ -107,15 +108,15 @@ class BasePlugin:
         payload = str(message.payload.decode("utf-8"))
         Domoticz.Debug("message received " + payload)
 
-        if message.topic == self.mqttstatetopic.replace("#",'cmnd/POWER' + self.mqttswitchclosed):
+        if message.topic == "cmnd/" + self.mqttstatetopic.replace("#",'POWER' + self.mqttswitchclosed):
             Domoticz.Debug("Power Close switch")
             self.updateGarageDoorState(payload == 'ON', None)
 
-        if message.topic == self.mqttstatetopic.replace("#","cmnd/POWER" + self.mqttswitchopen):
+        if message.topic == "cmnd/" + self.mqttstatetopic.replace("#","POWER" + self.mqttswitchopen):
             Domoticz.Debug("Power Open switch")
             self.updateGarageDoorState(None, payload == "ON")
 
-        if message.topic == self.mqttstatetopic.replace("#",'SENSOR'):
+        if message.topic == "tele/" + self.mqttstatetopic.replace("#",'SENSOR'):
             json_msg = json.loads(payload)
             Domoticz.Debug("Sensor message: " + str(json_msg))
             self.updateGarageDoorState(json_msg["Switch" + self.mqttswitchclosed] == "ON", json_msg["Switch" + self.mqttswitchopen] == "ON")
