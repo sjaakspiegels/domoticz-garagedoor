@@ -237,7 +237,7 @@ def UpdateImage(Unit, StateIcon):
             if StateIcon == "GarageDoorOpen":
                 caption = "Open"
             Options = {"LevelActions": "||","LevelNames": caption + "|Open|Sluit","LevelOffHidden": "true","SelectorStyle": "0"}
-            Devices[Unit].Update(Image=Images[StateIcon].ID, Options=Options)
+            Devices[Unit].Update(nValue=Devices[Unit].nValue, sValue=StateIcon, Image=Images[StateIcon].ID, Options=Options)
     else:
         Domoticz.Debug("Error update icon")
     return
