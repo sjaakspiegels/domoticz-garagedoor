@@ -232,7 +232,7 @@ def UpdateImage(Unit, StateIcon):
         Domoticz.Debug("Device Image update to " + StateIcon)
         if (Devices[Unit].Image != Images[StateIcon].ID):
             caption = "Half open"
-            if StateIcon == "GarageDoorClose":
+            if StateIcon == "GarageDoorClosed":
                 caption = "Dicht"
             if StateIcon == "GarageDoorOpen":
                 caption = "Open"
