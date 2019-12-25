@@ -231,7 +231,8 @@ def UpdateImage(Unit, StateIcon):
     if (Unit in Devices) and (StateIcon in Images):
         Domoticz.Debug("Device Image update to " + StateIcon)
         if (Devices[Unit].Image != Images[StateIcon].ID):
-            Devices[Unit].Update(nValue=Devices[Unit].nValue, sValue=StateIcon, Image=Images[StateIcon].ID)
+            Options = {"LevelActions": "||","LevelNames": StateIcon + "|Open|Sluit","LevelOffHidden": "true","SelectorStyle": "0"}
+            Devices[Unit].Update(nValue=Devices[Unit].nValue, sValue=StateIcon, Image=Images[StateIcon].ID Options=Options)
     else:
         Domoticz.Debug("Error update icon")
     return
