@@ -2,9 +2,6 @@
 # Works with domoticz and MQTT
 # Author: Sjaak Spiegels
 #
-# Based on code from: 
-#
-#
 """
 <plugin key="Garagedoor" name="Garagedoor" version="1.0.0" author="Sjaak" wikilink="" externallink="">
     <params>
@@ -62,7 +59,7 @@ class BasePlugin:
         if ("GarageDoorHalfOpen" not in Images): Domoticz.Image("GarageDoorHalfOpen.zip").Create()
 
         if (len(Devices) == 0):
-            Options = {"LevelActions": "||","LevelNames": "Off|Open|Sluit","LevelOffHidden": "true","SelectorStyle": "0"}
+            Options = {"LevelActions": "||","LevelNames": "|Open|Sluit","LevelOffHidden": "true","SelectorStyle": "0"}
             Domoticz.Device(Name="garage-door-status", Unit=1, TypeName="Selector Switch", Switchtype=18, Options=Options).Create()
             Domoticz.Log("Devices created.")
 
