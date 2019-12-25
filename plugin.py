@@ -62,7 +62,7 @@ class BasePlugin:
         if ("GarageDoorHalfOpen" not in Images): Domoticz.Image("GarageDoorHalfOpen.zip").Create()
 
         if (len(Devices) == 0):
-            Options = {"LevelActions": "|","LevelNames": "Open|Sluit","LevelOffHidden": "true","SelectorStyle": "0"}
+            Options = {"LevelActions": "||","LevelNames": "Off|Open|Sluit","LevelOffHidden": "true","SelectorStyle": "0"}
             Domoticz.Device(Name="garage-door-status", Unit=1, TypeName="Selector Switch", Switchtype=18, Options=Options).Create()
             Domoticz.Log("Devices created.")
 
@@ -116,13 +116,8 @@ class BasePlugin:
             self.updateGarageDoorState(None, payload == "ON")
 
         if message.topic == self.mqttstatetopic.replace("#",'SENSOR'):
-            Domoticz.Debug("Sensor message")
             json_msg = json.loads(payload)
             Domoticz.Debug("Sensor message: " + str(json_msg))
-            msg_closed = json_msg['Switch3']
-            Domoticz.Debug("Switch closed " + str(msg_closed)+ self.mqttswitchclosed)
-            msg_open = json_msg['Switch4']
-            Domoticz.Debug("Switch open " + str(msg_open) + self.mqttswitchopen)
             self.updateGarageDoorState(json_msg["Switch" + self.mqttswitchclosed] == "ON", json_msg["Switch" + self.mqttswitchopen] == "ON")
 
     def updateGarageDoorState(self, GarageDoorClosed, GarageDoorOpen):
@@ -141,8 +136,7 @@ class BasePlugin:
             else:
                 self.garagedoor_is_open = False
 
-        Domoticz.Log("Garage door current state: " + self.garagedoorstate)
-
+        Domoticz.Debug("Garage door current state: " + self.garagedoorstate)
 
         state = self.garagedoorstate
         if self.garagedoor_is_closed:
@@ -152,7 +146,7 @@ class BasePlugin:
         else:
             self.garagedoorstate = 'GarageDoorHalfOpen'    
 
-        Domoticz.Log("Garage door new state: " + self.garagedoorstate)
+        Domoticz.Debug("Garage door new state: " + self.garagedoorstate)
 
         if state != self.garagedoorstate:
             Domoticz.Log("Garage door " + state + " => " + self.garagedoorstate)
@@ -165,10 +159,10 @@ class BasePlugin:
         Domoticz.Debug("onCommand called for Unit " + str(Unit) + ": Parameter '" + str(Command) + "', Level: " + str(Level))
         if Level == 10:
             Domoticz.Log("Garage door open")
-            self.mqttClient.publish(self.mqttstatetopic.replace('#','POWER' + self.mqttbuttonopen), payload = 'ON', qos=1)
+            self.mqttClient.publish(self.mqttstatetopic.replace("#","POWER" + self.mqttbuttonopen), payload = "ON", qos=1)
         elif Level == 20:
             Domoticz.Log("Garage door close")
-            self.mqttClient.publish(self.mqttstatetopic.replace('#','POWER' + self.mqttbuttonclose), payload = 'ON', qos=1)
+            self.mqttClient.publish(self.mqttstatetopic.replace("#","POWER" + self.mqttbuttonclose), payload = "ON", qos=1)
 
 
     def onNotification(self, Name, Subject, Text, Status, Priority, Sound, ImageFile):
